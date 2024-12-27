@@ -30,11 +30,12 @@ const openList = document.getElementById("openList");
 const closedList = document.getElementById("closedList");
 const clearCompletedButton = document.getElementById("clearCompletedButton");
 const clearAllButton = document.getElementById("clearAllButton");
-const addButton = document.getElementById("addButton");
+const newItemForm = document.getElementById("newItemForm");
 const timerHeading = document.getElementById("timerHeading");
 const timerStartButton = document.getElementById("timerStartButton");
 const timerStopButton = document.getElementById("timerStopButton");
 const timerResetButton = document.getElementById("timerResetButton");
+
 
 /***********************************************
  * SAVE TO LOCAL STORAGE
@@ -248,12 +249,6 @@ function reorderItems(arr, fromIndex, toIndex) {
  * CLEAR BUTTON CLICK HANDLER
  ***********************************************/
 
-// clearButton.addEventListener("click", () => {
-//     closedItems = [];
-//     saveToLocalStorage();
-//     renderLists();
-// });
-
 clearAllButton.addEventListener("click", () => {
     openItems = [];
     closedItems = [];
@@ -271,15 +266,15 @@ clearCompletedButton.addEventListener("click", () => {
  * ADD BUTTON CLICK HANDLER
  ***********************************************/
 
-addButton.addEventListener("click", () => {
-    const input = document.getElementById("newItem");
-    const newItem = input.value.trim();
-    if (newItem) {
-        openItems.unshift(newItem); // Add to the beginning of the list
-        saveToLocalStorage();
-        renderLists();
-        input.value = "";
-    }
+newItemForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = newItemForm.querySelector("input");
+    const text = input.value.trim();
+    if (text.length === 0) return;
+    openItems.push(text);
+    saveToLocalStorage();
+    renderLists();
+    input.value = "";
 });
 
 /***********************************************
@@ -298,10 +293,6 @@ let elapsedTime = 0;
 // Initialize timer display to 00:00:00.000
 timerHeading.textContent = "00:00:00.000";
 
-// create a renderer that is called every 100 ms
-// it should update if the timer is running otherwise not
-// each time, it should get the system time and compare against start time
-// should display in the format HH:MM:SS:mmm
 function renderTimer() {
     if (timerRunning) {
         let currentTime = new Date().getTime();
