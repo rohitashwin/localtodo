@@ -5,16 +5,23 @@ const OPEN_KEY = "openItems";
 const CLOSED_KEY = "closedItems";
 
 /***********************************************
+ * DYNAMIC VARS
+ ***********************************************/
+
+let timerInterval = null;
+
+
+/***********************************************
  * INITIALIZE ARRAYS FROM LOCAL STORAGE
  ***********************************************/
 let openItems = JSON.parse(localStorage.getItem(OPEN_KEY)) || [
-    "sample task 1",
-    "sample task 2",
-    "sample task 3"
+    "SUBJECT: sample task 1",
+    "SUBJECT: sample task 2",
+    "SUBJECT2: sample task 3"
 ];
 let closedItems = JSON.parse(localStorage.getItem(CLOSED_KEY)) || [
-    "sample completed task 1",
-    "sample completed task 2"
+    "SUBJECT: sample completed task 1",
+    "SUBJECT2: sample completed task 2"
 ];
 
 // References to Open and Closed lists
@@ -24,6 +31,10 @@ const closedList = document.getElementById("closedList");
 const clearCompletedButton = document.getElementById("clearCompletedButton");
 const clearAllButton = document.getElementById("clearAllButton");
 const addButton = document.getElementById("addButton");
+const timerHeading = document.getElementById("timerHeading");
+const timerStartButton = document.getElementById("timerStartButton");
+const timerStopButton = document.getElementById("timerStopButton");
+const timerResetButton = document.getElementById("timerResetButton");
 
 /***********************************************
  * SAVE TO LOCAL STORAGE
@@ -76,6 +87,13 @@ function createListItem(text, index, isClosed) {
     // Add label for the task name
     const label = document.createElement("span");
     label.textContent = text;
+
+    // the text is of the form "SUBJECT: task"
+    // SUBJECT: should be bold
+    let colonIndex = text.indexOf(":");
+    let subject = text.substring(0, colonIndex + 1);
+    let task = text.substring(colonIndex + 1);
+    label.innerHTML = `<b >${subject}</b>${task}`;
 
     // Append checkbox and label to the list item
     li.appendChild(label);
@@ -268,3 +286,57 @@ addButton.addEventListener("click", () => {
  * INITIAL RENDER
  ***********************************************/
 renderLists();
+
+/***********************************************
+ * TIMER FUNCTIONALITY
+ ***********************************************/
+
+let timerStart = null;
+let timerRunning = false;
+let elapsedTime = 0;
+
+// Initialize timer display to 00:00:00.000
+timerHeading.textContent = "00:00:00.000";
+
+// create a renderer that is called every 100 ms
+// it should update if the timer is running otherwise not
+// each time, it should get the system time and compare against start time
+// should display in the format HH:MM:SS:mmm
+function renderTimer() {
+    if (timerRunning) {
+        let currentTime = new Date().getTime();
+        let totalElapsedTime = elapsedTime + (currentTime - timerStart);
+        let date = new Date(totalElapsedTime);
+        let hours = String(date.getUTCHours()).padStart(2, '0');
+        let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+        let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+        let milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+        timerHeading.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+    }
+}
+
+// start button should start the timer
+timerStartButton.addEventListener("click", () => {
+    if (!timerRunning) {
+        timerStart = new Date().getTime();
+        timerRunning = true;
+        timerInterval = setInterval(renderTimer, 29);
+    }
+});
+
+// stop button should stop the timer
+timerStopButton.addEventListener("click", () => {
+    if (timerRunning) {
+        timerRunning = false;
+        elapsedTime += new Date().getTime() - timerStart;
+        clearInterval(timerInterval);
+    }
+});
+
+// reset button should reset the timer
+timerResetButton.addEventListener("click", () => {
+    timerRunning = false;
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    timerHeading.textContent = "00:00:00.000";
+});

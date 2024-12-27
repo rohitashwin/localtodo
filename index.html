@@ -12,16 +12,21 @@
         <button id="clearAllButton">clear all</button>
     </header>
     <form class="addItem" id="newItemForm">
-        <input type="text" id="newItem" placeholder="add a new item" />
+        <input type="text" id="newItem" placeholder="SUBJECT: enter todo task here (CTRL+F to search for subject)" />
         <button id="addButton" type="submit">add</button>
     </form>
     <div id="listsContainer">
         <ul id="openList"></ul>
-            <button id="clearCompletedButton">clear completed</button>
+        <button id="clearCompletedButton">clear completed</button>
         <ul id="closedList"></ul>
     </div>
-    <div class="buttonsContainer">
-
+    <div id="timerContainer">
+        <h2 id="timerHeading">10:20:30:092</h2>
+        <div id="timerButtonContainer">
+            <button id="timerStartButton">start</button>
+            <button id="timerStopButton">stop</button>
+            <button id="timerResetButton">reset</button>
+        </div>
     </div>
     <script src="script.js"></script>
     <style>
@@ -108,7 +113,7 @@
 
         #listsContainer {
             /* 60% of the viewport height */
-            height: 60vh;
+            height: 40vh;
             display: flex;
             flex-direction: column;
             margin: 0 auto;
@@ -162,6 +167,28 @@
 
         .target {
             border: 1px dashed #4d4d4d;
+        }
+
+        #timerContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            width: 60%;
+        }
+
+        #timerHeading {
+            font-weight: 300;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #timerButtonContainer {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            width: 100%;
         }
     </style>
 </body>
